@@ -21,7 +21,7 @@ const CategoryPage = () => {
   const [recordCount, setRecordCount] = useState(0);
   const [cash, setCash] = useState(0);
   const [netTotal, setNetTotal] = useState(0);
- // New state for voucher number
+  // New state for voucher number
   const [currentDate, setCurrentDate] = useState(""); // New state for current date
 
   useEffect(() => {
@@ -54,8 +54,6 @@ const CategoryPage = () => {
 
     setTotalPrice(calculatedTotalPrice);
   }, [favorites]);
-
- 
 
   // Function to get the current date
   const getCurrentDate = () => {
@@ -195,8 +193,8 @@ const CategoryPage = () => {
 
   const router = useRouter();
 
-   // Function to generate a random voucher number
-   const generateVoucherNumber = () => {
+  // Function to generate a random voucher number
+  const generateVoucherNumber = () => {
     const voucherNumber = Math.floor(100000 + Math.random() * 900000);
     return voucherNumber.toString();
   };
@@ -204,7 +202,7 @@ const CategoryPage = () => {
   const handlePaymentClick = () => {
     // Generate voucher number
     const voucherNumber = generateVoucherNumber();
-    
+
     // Create the request body
     const requestBody = {
       customer_name: "Hex exee",
@@ -224,40 +222,40 @@ const CategoryPage = () => {
         console.log(response.data);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
 
-      if (totalPrice > 0) {
-        // Prepare the data to send to the Receipt page
-        const productsData = {
-          products: favorites,
-          totalPrice: totalPrice.toFixed(2),
-          voucherNumber, // Include the generated voucher number
-          currentDate, // Include the current date
-          itemCount: favorites.length, // Calculate the item count
-          cash: totalPrice.toFixed(2), // Set cash to the total price
-          tax: "0", // Set tax to 0 (you can calculate it if needed)
-          netTotal: totalPrice.toFixed(2), // Set net total to the total price
-        };
-  
-        // Store the selected products data in local storage
-        localStorage.setItem("selectedProducts", JSON.stringify(productsData));
-  
-        // Redirect to the Receipt page
-        router.push("/receipt");
-      } else {
-        // Handle the case when there are no selected products
-        alert("Please add products to your receipt before making a payment.");
-      }
+    if (totalPrice > 0) {
+      // Prepare the data to send to the Receipt page
+      const productsData = {
+        products: favorites,
+        totalPrice: totalPrice.toFixed(2),
+        voucherNumber, // Include the generated voucher number
+        currentDate, // Include the current date
+        itemCount: favorites.length, // Calculate the item count
+        cash: totalPrice.toFixed(2), // Set cash to the total price
+        tax: "0", // Set tax to 0 (you can calculate it if needed)
+        netTotal: totalPrice.toFixed(2), // Set net total to the total price
+      };
 
+      // Store the selected products data in local storage
+      localStorage.setItem("selectedProducts", JSON.stringify(productsData));
+
+      // Redirect to the Receipt page
+      router.push("/receipt");
+    } else {
+      // Handle the case when there are no selected products
+      alert("Please add products to your receipt before making a payment.");
+    }
   };
 
-
   return (
-    <div className="flex">
-      <div className="flex-2">
-        <div className="flex flex-col">
-          <h2 className="text-lg font-bold mb-4"> Categories:</h2>
+
+    
+    <div className="grid grid-rows-3 grid-flow-col gap-4 h-[100%]">
+      
+        <div className="col-span-2 ">
+          <h2 className="text-lg font-bold "> Categories:</h2>
           <ul className="flex flex-wrap">
             {listCategories.map((category) => (
               <li
@@ -272,8 +270,9 @@ const CategoryPage = () => {
             ))}
           </ul>
         </div>
-        <h2 className="text-lg font-bold mb-4">Products:</h2>
-        <div className="max-h-[400px] min-h-[400px] overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-300 rounded">
+        
+        <div className=" row-span-2 col-span-2  overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-300 rounded">
+        <h2 className="text-lg font-bold  ">Products:</h2>
           <ul className="w-[100%] grid grid-cols-2">
             {categories
               .filter((product) => product.category_name === selectedCategory)
@@ -310,12 +309,15 @@ const CategoryPage = () => {
               ))}
           </ul>
         </div>
-      </div>
+     
+    
 
-      <div className="flex-1  favorites-section ml-3  ">
-        <h2 className="text-lg font-bold mb-4 favorites-header">Receive</h2>
-        <div className="flex max-h-[95%] min-h-[95%] flex-col justify-between ">
-          <div className=" ">
+      <div className="row-span-3 flex  border-4 border-blue-300 flex-col justify-center ">
+        
+        
+
+          <div className="ml-3 h-[76%]">
+          <h2 className="text-lg font-bold  favorites-header">Receive</h2>
             <div>
               {favorites.map((favorite, index) => (
                 <div
@@ -358,9 +360,9 @@ const CategoryPage = () => {
             </div>
           </div>
 
-          <div className=" ">
-  <div className="grid grid-cols-4 gap-3">
-    {[
+          <div className="ml-3">
+            <div className="grid grid-cols-4 gap-3">
+              {[
                 1,
                 2,
                 3,
@@ -378,38 +380,42 @@ const CategoryPage = () => {
                 ".",
                 "Payment",
               ].map((number, index) => (
-      <div
-        key={index}
-        className={`col-span-1 ${
-          (number === "QTY" && favorites.length > 0) ? "bg-blue-200" : ""
-        }`}
-        onMouseEnter={() => setHoveredButton(number === "QTY" ? "QTY" : null)}
-        onMouseLeave={() => setHoveredButton(null)}
-        onClick={() => {
-          if (number === "DEL") {
-            handleDeleteClick(selectedProduct);
-          } else if (number === "QTY") {
-            // Handle quantity button logic here
-          } else if (number === "CLEAR") {
-            handleClearClick();
-          } else if (number === "Payment") {
-            generateVoucherNumber(); // Generate voucher number
-            getCurrentDate(); // Get current date
-            handlePaymentClick();
-          } else {
-            handleNumberClick(number);
-          }
-        }}
-        style={{ cursor: "pointer" }}
-      >
-        {number}
-      </div>
-    ))}
-  </div>
-  {showDelButton && <div className="col-span-1">DEL</div>}
-</div>
+                <div
+                  key={index}
+                  className={`col-span-1 ${
+                    number === "QTY" && favorites.length > 0
+                      ? "bg-blue-200"
+                      : ""
+                  }`}
+                  onMouseEnter={() =>
+                    setHoveredButton(number === "QTY" ? "QTY" : null)
+                  }
+                  onMouseLeave={() => setHoveredButton(null)}
+                  onClick={() => {
+                    if (number === "DEL") {
+                      handleDeleteClick(selectedProduct);
+                    } else if (number === "QTY") {
+                      // Handle quantity button logic here
+                    } else if (number === "CLEAR") {
+                      handleClearClick();
+                    } else if (number === "Payment") {
+                      generateVoucherNumber(); // Generate voucher number
+                      getCurrentDate(); // Get current date
+                      handlePaymentClick();
+                    } else {
+                      handleNumberClick(number);
+                    }
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  {number}
+                </div>
+              ))}
+            </div>
+            {showDelButton && <div className="col-span-1">DEL</div>}
+          </div>
 
-        </div>
+       
       </div>
     </div>
   );
